@@ -62,4 +62,29 @@ async function SunvoyChallege() {
     console.log(`Writing users.json: ${users.length} users`);
     writeFile(filePath, JSON.stringify(users, null, 2), 'utf-8');
 
+    options = {
+        method: "GET",
+        headers: {
+            "Content-Type": "text/x-www-form-urlencoded",
+            "Cookie": cookies
+        },
+        redirect: "manual"
+    }
+    const tokens = await fetch(`${url}/settings/tokens`, options)
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error(`Error! status: ${response.status}`);
+            }
+            return response.text();
+        });
+    $ = cheerio.load(tokens);
+
+    const access_token: any = $("#access_token").val();
+    const openId: any = $("#openId").val();
+    const userId: any = $("#userId").val();
+    const apiuser: any = $("#apiuser").val();
+    const operateId: any = $("#operateId").val();
+    const language: any = $("#language").val();
+    const timestamp = Math.floor(Date.now() / 1e3);
+
 }
