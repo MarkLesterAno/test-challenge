@@ -1,5 +1,6 @@
 import * as cheerio from 'cheerio';
 import { writeFile } from 'fs/promises';
+import crypto from 'crypto';
 
 async function SunvoyChallege() {
     const filePath = "users.json";
@@ -86,5 +87,20 @@ async function SunvoyChallege() {
     const operateId: any = $("#operateId").val();
     const language: any = $("#language").val();
     const timestamp = Math.floor(Date.now() / 1e3);
+
+    const userParams: any = {
+        access_token: access_token,
+        openId: openId,
+        userId: userId,
+        apiuser: apiuser,
+        operateId: operateId,
+        language: language,
+        timestamp: timestamp.toString()
+    };
+    const payload = Object.keys(userParams).sort().map((key) => `${key}=${encodeURIComponent(userParams[key])}`).join('&');
+    const hmac = crypto.createHmac('sha1', 'mys3cr3t')
+        .update(payload)
+        .digest('hex').toUpperCase();
+    const fullPayload = `${payload}&checkcode=${hmac}`;
 
 }
