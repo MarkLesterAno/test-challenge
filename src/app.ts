@@ -103,4 +103,26 @@ async function SunvoyChallege() {
         .digest('hex').toUpperCase();
     const fullPayload = `${payload}&checkcode=${hmac}`;
 
+    options = {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Cookie": cookies
+        },
+        body: fullPayload,
+        redirect: "manual"
+    }
+    const userSettings = await fetch(`https://api.challenge.sunvoy.com/api/settings`, options)
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error(`Error! status: ${response.text()}`);
+            }
+            return response.json();
+        });
+    const completedUsers = [...users, userSettings];
+    console.log(`Writing users.json: ${completedUsers.length} users`);
+    writeFile(filePath, JSON.stringify(completedUsers, null, 2), 'utf-8');
 }
+
+SunvoyChallege();
+
