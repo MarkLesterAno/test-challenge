@@ -28,4 +28,20 @@ async function SunvoyChallege() {
     const nonce: any = $('input[name="nonce"]').val();
     params.set("nonce", nonce);
 
+    options = {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: params.toString(),
+        redirect: "manual"
+    }
+    const response = await fetch(`${url}/login`, options);
+
+    const cookies: any = response.headers.get("Set-Cookie");
+    if (!cookies) {
+        console.error("No cookie received");
+        return;
+    }
+
 }
