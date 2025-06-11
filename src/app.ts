@@ -1,4 +1,5 @@
 import * as cheerio from 'cheerio';
+import { writeFile } from 'fs/promises';
 
 async function SunvoyChallege() {
     const filePath = "users.json";
@@ -43,5 +44,22 @@ async function SunvoyChallege() {
         console.error("No cookie received");
         return;
     }
+
+    options = {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Cookie": cookies
+        }
+    }
+    const users = await fetch(`${url}/api/users`, options)
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error(`Error! status: ${response.status}`);
+            }
+            return response.json();
+        });
+    console.log(`Writing users.json: ${users.length} users`);
+    writeFile(filePath, JSON.stringify(users, null, 2), 'utf-8');
 
 }
